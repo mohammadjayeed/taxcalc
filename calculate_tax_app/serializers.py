@@ -13,3 +13,14 @@ class TaxCalculationSerializer(serializers.Serializer):
             raise serializers.ValidationError("amount must be a greater than 0.")
         return value
     
+    def validate_city(self, value):
+        if any(char.isdigit() for char in value):
+            raise serializers.ValidationError("invalid city name")
+        else:
+            return value
+    
+    def validate_state(self, value):
+        if len(value) > 2:
+            raise serializers.ValidationError("invalid state name")
+        else:
+            return value

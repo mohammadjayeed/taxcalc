@@ -33,13 +33,12 @@ def calculate_tax(request):
         headers = {'Authorization': f'Bearer {bearer_token}'}
         response = requests.post(other_api_url, data=data, headers=headers)
         
-        
-        if response.status_code == 200:
-            tax_data = response.json()
-            tax = tax_data.get('amount_to_collect', 0)  
-            return Response({'tax': tax})
+        tax_data = response.json()
+        # print(tax_data)
+        if response.status_code == 200:   
+            amount_to_collect = tax_data.get('tax', {}).get('amount_to_collect', 0)
+            return Response({'tax': amount_to_collect})
         elif response.status_code in [400,401]:
-            # Handle error response from the other API
-            return Response({'error': f'{tax_data['error']}'}, status=response.status_code)
+            return Response({'error': f"{tax_data['error']}", 'detail':f"{tax_data['detail']}"}, status=response.status_code)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
