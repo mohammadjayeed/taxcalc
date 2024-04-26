@@ -21,6 +21,6 @@ class TaxCalculationSerializer(serializers.Serializer):
     
     def validate_state(self, value):
         if len(value) > 2:
-            raise serializers.ValidationError("invalid state name")
+            raise serializers.ValidationError("Please enter a valid state code. e.g. NY for New York")
         else:
             return value

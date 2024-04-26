@@ -1,9 +1,11 @@
 import requests
 from rest_framework.decorators import api_view
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from .serializers import TaxCalculationSerializer
 from rest_framework import status
 
+@swagger_auto_schema(method='post', request_body=TaxCalculationSerializer)
 @api_view(['POST'])
 def calculate_tax(request):
     serializer = TaxCalculationSerializer(data=request.data)
