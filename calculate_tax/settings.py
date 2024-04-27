@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'calculate_tax_app',
     'drf_yasg'
 ]
@@ -70,7 +71,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'calculate_tax.wsgi.application'
-
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "mydatabase",
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -4,6 +4,9 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from .serializers import TaxCalculationSerializer
 from rest_framework import status
+from rest_framework.viewsets import ModelViewSet # ViewSet
+from .serializers import ProductSerializer
+from .models import Product
 
 @swagger_auto_schema(method='post', request_body=TaxCalculationSerializer)
 @api_view(['POST'])
@@ -36,7 +39,7 @@ def calculate_tax(request):
         response = requests.post(other_api_url, data=data, headers=headers)
         
         tax_data = response.json()
-        # print(tax_data)
+        print(tax_data)
         if response.status_code == 200:   
             amount_to_collect = tax_data.get('tax', {}).get('amount_to_collect', 0)
             return Response({'tax': amount_to_collect})
@@ -44,3 +47,31 @@ def calculate_tax(request):
             return Response({'error': f"{tax_data['error']}", 'detail':f"{tax_data['detail']}"}, status=response.status_code)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductViewSet(ModelViewSet):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        queryset = Product.objects.filter(title=request.data['title']).exists()
+        serializer = ProductSerializer(data=request.data)
+
+        print(queryset)
+        if queryset:
+            return Response({"status": "error","message": 'product already exists'}, status.HTTP_400_BAD_REQUEST)
+            
+
+
+        if not serializer.is_valid():
+            return Response({"status": "error","message": serializer.errors}, status.HTTP_422_UNPROCESSABLE_ENTITY)
+        
+        serializer.save()
+        return Response({"status": "success","message": "product created."}, status.HTTP_201_CREATED)
+            
+
+
+
+        
+
+        
